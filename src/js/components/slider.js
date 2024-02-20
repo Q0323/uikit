@@ -11,6 +11,7 @@ import {
     getIndex,
     hasOwn,
     includes,
+    isNumeric,
     isVisible,
     last,
     selFocusable,
@@ -33,6 +34,7 @@ export default {
     props: {
         center: Boolean,
         sets: Boolean,
+        focus: String,
     },
 
     data: {
@@ -42,6 +44,7 @@ export default {
         selList: '.uk-slider-items',
         selNav: '.uk-slider-nav',
         clsContainer: 'uk-slider-container',
+        focus: 'all',
         Transitioner,
     },
 
@@ -235,7 +238,12 @@ export default {
         },
 
         updateActiveClasses(currentIndex = this.index) {
-            const actives = this._getTransitioner(currentIndex).getActives();
+            let actives = this._getTransitioner().getActives();
+
+            if (isNumeric(this.focus)) {
+                const focus = Math.min(actives.length - 1, Number(this.focus));
+                actives = [this.slides[this.getValidIndex(currentIndex + focus)]];
+            }
 
             const activeClasses = [
                 this.clsActive,
